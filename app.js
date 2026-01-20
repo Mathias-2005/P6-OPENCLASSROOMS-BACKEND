@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const Book = require('./models/Book');
 
 mongoose.connect('mongodb+srv://Mathias:Mathias2103@cluster1.dmmauub.mongodb.net/?appName=Cluster1',
   { serverApi: { version: '1', strict: true, deprecationErrors: true } })
@@ -17,251 +18,43 @@ app.use((req, res, next) => {
     next();
 });
 
+// ROUTE POUR AJOUTER UN NOUVEAU BOOK
 app.post('/api/books', (req, res, next) => {
-    console.log(req.body);
-    res.status(201).json({
-        message: "objet crée !"
+    delete req.body._id;
+    const book = new Book({
+        ...req.body
     });
+    book.save()
+    .then(() => res.status(201).json({ message: 'Livre enregistré !'}))
+    .catch(error => res.status(400).json({ error }));
 });
 
+// ROUTE POUR MODIFIER LE BOOK SELON L'ID
+app.put('/api/books/:id', (req, res, next) => {
+    Book.uptdateOne({ _id: req.params.id }, {...req.body, _id: req.params.id})
+    .then(() => res.status(200).json({ message: 'Livre modifié !'}))
+    .catch(error => res.status(400).json({ error }));
+});
+
+// ROUTE POUR SUPPRIMER LE LIVRE SELON L'ID 
+app.delete('/api/books/:id', (req, res, next) => {
+    Book.deleteOne({ _id: req.params.id})
+    .then(() => res.status(200).json({ message: 'Livre supprimé !'}))
+    .catch(error => res.status(400).json({ error }));
+});
+
+// ROUTE POUR AVOIR LE BOOK AFFICHER SELON ID
+app.get('/api/books/:id', (req, res, next) => {
+    Book.findOne({ _id: req.params.id })
+    .then(book => res.status(200).json(book))
+    .catch(error => res.status(404).json({ error }));
+});
+
+// ROUTE POUR AVOIR TOUT LES BOOKS
 app.get('/api/books', (req, res, next) => {
-    const books = [
-        {
-            "id": "1",
-            "userId": "clc4wj5lh3gyi0ak4eq4n8syr",
-            "title": "Milwaukee Mission",
-            "author": "Elder Cooper",
-            "imageUrl": "https://via.placeholder.com/206x260",
-            "year": 2021,
-            "genre": "Policier",
-            "ratings": [{
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "clc4wj5lh3gyi0ak4eq4n8syr",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            }],
-            "averageRating": 3
-        },
-        {
-            "id": "2",
-            "userId": "clbxs3tag6jkr0biul4trzbrv",
-            "title": "Book for Esther",
-            "author": "Alabaster",
-            "imageUrl": "https://via.placeholder.com/206x260",
-            "year": 2022,
-            "genre": "Paysage",
-            "ratings": [{
-                "userId": "clbxs3tag6jkr0biul4trzbrv",
-                "grade": 4
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            }],
-            "averageRating": 4.2
-        },
-        {
-            "id": "3",
-            "userId": "1",
-            "title": "The Kinfolk Table",
-            "author": "Nathan Williams",
-            "imageUrl": "https://via.placeholder.com/206x260",
-            "year": 2022,
-            "genre": "Cuisine",
-            "ratings": [{
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            }],
-            "averageRating": 3
-        },
-        {
-            "id": "4",
-            "userId": "1",
-            "title": "Milwaukee Mission",
-            "author": "Elder Cooper",
-            "imageUrl": "https://via.placeholder.com/206x260",
-            "year": 2021,
-            "genre": "Policier",
-            "ratings": [{
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            }],
-            "averageRating": 3
-        },
-        {
-            "id": "5",
-            "userId": "1",
-            "title": "Book for Esther",
-            "author": "Alabaster",
-            "imageUrl": "https://via.placeholder.com/206x260",
-            "year": 2022,
-            "genre": "Paysage",
-            "ratings": [{
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            }],
-            "averageRating": 4
-        },
-        {
-            "id": "6",
-            "userId": "1",
-            "title": "The Kinfolk Table",
-            "author": "Nathan Williams",
-            "imageUrl": "https://via.placeholder.com/206x260",
-            "year": 2022,
-            "genre": "Cuisine",
-            "ratings": [{
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            }],
-            "averageRating": 3
-        },
-        {
-            "id": "7",
-            "userId": "1",
-            "title": "Milwaukee Mission",
-            "author": "Elder Cooper",
-            "imageUrl": "https://via.placeholder.com/206x260",
-            "year": 2021,
-            "genre": "Policier",
-            "ratings": [{
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            }],
-            "averageRating": 3
-        },
-        {
-            "id": "8",
-            "userId": "clc7s9xnh7zpt0ak4fisdwuj1",
-            "title": "Book for Esther",
-            "author": "Alabaster",
-            "imageUrl": "https://via.placeholder.com/206x260",
-            "year": 2022,
-            "genre": "Paysage",
-            "ratings": [{
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            }],
-            "averageRating": 4
-        },
-        {
-            "id": "9",
-            "userId": "clc4wj5lh3gyi0ak4eq4n8syr",
-            "title": "The Kinfolk Table",
-            "author": "Nathan Williams",
-            "imageUrl": "https://via.placeholder.com/206x260",
-            "year": 2022,
-            "genre": "Cuisine",
-            "ratings": [{
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "1",
-                "grade": 5
-            },
-            {
-                "userId": "clc4wj5lh3gyi0ak4eq4n8syr",
-                "grade": 1
-            }],
-            "averageRating": 3
-        }
-    ];
-    res.status(200).json(books);
+    Book.find()
+    .then(books => res.status(200).json(books))
+    .catch(error => res.status(400).json({ error }));
 });
 
 module.exports = app;
