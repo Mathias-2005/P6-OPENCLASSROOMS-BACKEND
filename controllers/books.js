@@ -4,7 +4,17 @@ const Book = require('../models/Book');
 exports.createBook = ('/', (req, res, next) => {
     delete req.body._id;
     const book = new Book({
-        ...req.body
+        userId: req.body.userId,
+        title: req.body.title,
+        author: req.body.author,
+        imageUrl: req.body.imageUrl,
+        year: req.body.year,
+        genre: { type: String, required: true },
+        ratings: [{
+            userId: req.body.userId,
+            grade: req.body.grade
+        }],
+        averageRating: req.body.averageRating
     });
     book.save()
         .then(() => res.status(201).json({ message: 'Livre enregistré !' }))

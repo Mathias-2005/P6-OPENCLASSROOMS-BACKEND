@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const booksRoutes = require('./routes/books');
+const userRoutes = require('./routes/user');
 
 mongoose.connect('mongodb+srv://Mathias:Mathias2103@cluster1.dmmauub.mongodb.net/?appName=Cluster1',
   { serverApi: { version: '1', strict: true, deprecationErrors: true } })
@@ -19,5 +20,6 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 app.use('/api/stuff', booksRoutes);
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
