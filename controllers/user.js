@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt'); // PACKAGE POUR LE MDP EN HASH
+const jwt = require('jsonwebtoken'); // PACKAGE POUR GENERE LE TOKEN 
 
+// LOGIC DE LA FUNCTION SIGNUP
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10) // 10 TOURS POUR LE HASHAGE + IL EN A + C'EST LONG + C'EST SECURISER
         .then(hash => {
@@ -15,6 +17,7 @@ exports.signup = (req, res, next) => {
         .catch(error => res.status(500).json({ error })); // ERREUR SERVEUR
 };
 
+// LOGIC DE LA FUNCTION LOGIN
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
         .then(user => {
@@ -28,10 +31,14 @@ exports.login = (req, res, next) => {
                     }
                     res.status(200).json({
                         userId: user._id,
-                        token: 'TOKEN'
+                        token: jwt.sign( // POUR CHIFFRER UN NOUVEAU TOKEN 
+                            { userId: user._id },
+                            'RANDOM_TOKEN_SECRET',
+                            { expiresIn: '24h' }
+                        )
                     });
                 })
                 .catch(error => res.status(500).json({ error }));
         })
-        .catch(error => res.status(500).json({ error }));
+        .catch(error => res.status(500).json({ error })); // ERREUR SERVEUR
 };
