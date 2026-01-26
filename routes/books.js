@@ -10,11 +10,17 @@ const bookCtrl = require('../controllers/books');
 // ROUTE POUR AJOUTER UN NOUVEAU BOOK
 router.post('/', auth, multer, sharp, bookCtrl.createBook);
 
+// ROUTE POUR AJOUTER UNE NOTES A UN BOOK 
+router.post('/:id/rating', auth, bookCtrl.rateBook);
+
 // ROUTE POUR MODIFIER LE BOOK SELON L'ID
 router.put('/:id', auth, multer, sharp, bookCtrl.modifyBook);
 
 // ROUTE POUR SUPPRIMER LE LIVRE SELON L'ID 
 router.delete('/:id', auth, bookCtrl.deleteBook);
+
+// ROUTE POUR AVOIR LES BOOKS BEST RATING
+router.get('/bestrating', bookCtrl.getBestRating);
 
 // ROUTE POUR AVOIR LE BOOK AFFICHER SELON ID
 router.get('/:id', bookCtrl.getOneBook);

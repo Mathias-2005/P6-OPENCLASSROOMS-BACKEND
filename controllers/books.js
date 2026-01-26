@@ -73,3 +73,14 @@ exports.getAllBooks = ((req, res, next) => {
         .then(books => res.status(200).json(books))
         .catch(error => res.status(400).json({ error }));
 });
+
+// LOGIQUE DE NOTRE ROUTE GET BESTRATING
+exports.getBestRating = ((req, res, next) => {
+    Book.find().sort({ ratings: -1 }).limit(3)
+    .then(books => res.status(200).json(books))
+    .catch(error => res.status(400).json({ error }));
+});
+
+exports.rateBook = ((req, res, next) => {
+    console.log('Rate book !')
+});
