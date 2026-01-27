@@ -81,6 +81,7 @@ exports.getBestRating = ((req, res, next) => {
     .catch(error => res.status(400).json({ error }));
 });
 
+// LOGIQUE DE NOTRE ROUTE POST RATEBOOK
 exports.rateBook = ((req, res, next) => {
     console.log('Rate book !')
 });
