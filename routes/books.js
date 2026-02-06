@@ -1,10 +1,9 @@
-const express = require('express');
+const express = require('express'); // PACKAGE GERE LE SERVEUR / ROUTES
 const router = express.Router();
 
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 const sharp = require('../middleware/sharp-config');
-
 const bookCtrl = require('../controllers/books');
 
 // ROUTE POUR AJOUTER UN NOUVEAU BOOK

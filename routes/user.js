@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express'); // PACKAGE GERE LE SERVEUR / ROUTES
 const router = express.Router();
 
 const userCtrl = require('../controllers/user');

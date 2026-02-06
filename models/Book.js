@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+const mongoose = require('mongoose'); // PACKAGE MONGOOSE POUR LA STRUCTURATION DE DONNES ET VALIDATION
 
 const bookSchema = mongoose.Schema({
     userId: { type: String, required: true },

@@ -1,4 +1,4 @@
-const sharp = require('sharp');
+const sharp = require('sharp'); // PACKAGE SHARP POUR L'OPTIMISATION D'IMAGE
 const path = require('path');
 const fs = require('fs').promises;
 
@@ -18,7 +18,7 @@ module.exports = async (req, res, next) => {
         const optimizedPath = path.join('images', optimizedFilename);
 
         await sharp(originalPath)
-            .resize(300, 400, { // REDIMENSIONNE L'IMAGE EN 400X400 EN GARDANT LE RATIO
+            .resize(300, 400, { // REDIMENSIONNE L'IMAGE EN 300X400 EN GARDANT LE RATIO
                 fit: 'cover', // ADAPTE L'IMAGE A SON CONTENEUR
                 position : 'center', // POSITIONNE L'IMAGE AU CENTRE
             })

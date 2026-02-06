@@ -103,15 +103,16 @@ exports.rateBook = async (req, res, next) => {
             return;
         }
         const newRating = { userId, grade: rating };
-        ratingInDb.push(newRating); // N'oubliez pas d'ajouter le nouveau rating !
+        ratingInDb.push(newRating); // ON AJOUTE LA NOUVELLE NOTE
         book.averageRating = calculateAverageRating(ratingInDb);
-        await book.save(); // AJOUT DE AWAIT ICI AUSSI !
+        await book.save(); 
         res.status(200).json(book);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
+// FONCTION QUI PERMET D'AVOIR LE CALCULE DE LA NOTE MOYENNE DES LIVRES
 function calculateAverageRating(ratings) {
     const sumOfAllGrades = ratings.reduce((sum, rating) => sum + rating.grade, 0);
     return sumOfAllGrades / ratings.length;
