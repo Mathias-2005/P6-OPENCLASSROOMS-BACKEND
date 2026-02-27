@@ -6,6 +6,9 @@ const multer = require('../middleware/multer-config');
 const sharp = require('../middleware/sharp-config');
 const bookCtrl = require('../controllers/books');
 
+// ROUTE POUR AVOIR TOUT LES BOOKS
+router.get('/', bookCtrl.getAllBooks);
+
 // ROUTE POUR AJOUTER UN NOUVEAU BOOK
 router.post('/', auth, multer, sharp, bookCtrl.createBook);
 
@@ -23,8 +26,5 @@ router.get('/bestrating', bookCtrl.getBestRating);
 
 // ROUTE POUR AVOIR LE BOOK AFFICHER SELON ID
 router.get('/:id', bookCtrl.getOneBook);
-
-// ROUTE POUR AVOIR TOUT LES BOOKS
-router.get('/', bookCtrl.getAllBooks);
 
 module.exports = router;
