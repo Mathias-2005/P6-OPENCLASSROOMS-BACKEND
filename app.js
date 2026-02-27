@@ -11,22 +11,11 @@ mongoose.connect('mongodb+srv://Mathias:Mathias2103@cluster1.dmmauub.mongodb.net
 
 const app = express();
 
-// CORS - AMÉLIORÉ
+// CORS - SIMPLE ET EFFICACE
 app.use((req, res, next) => {
-  const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:5173', // Si tu utilises Vite
-    'https://mon-vieux-grimoire-frontend.onrender.com'
-  ];
-  
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-  
+  res.header('Access-Control-Allow-Origin', '*'); // ✅ ACCEPTE TOUTES LES ORIGINES
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Credentials', 'true');
   
   // Gérer les requêtes OPTIONS
   if (req.method === 'OPTIONS') {
@@ -44,7 +33,7 @@ app.use('/api/books', booksRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-// ROUTE PAR DÉFAUT (Important pour Render!)
+// ROUTE PAR DÉFAUT
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Bienvenue sur Mon Vieux Grimoire API',
@@ -53,7 +42,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// ROUTE 404 - pour toute route non trouvée
+// ROUTE 404
 app.use((req, res) => {
   res.status(404).json({ 
     error: 'Route non trouvée',
