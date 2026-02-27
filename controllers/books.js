@@ -1,6 +1,15 @@
 const Book = require('../models/Book');
 const fs = require('fs'); // PACKAGE FS PERMET DE MODIFIER LE SYSTEME DE FICHIERS
 
+// Helper pour corriger les URLs des images
+const fixImageUrl = (imageUrl) => {
+    if (!imageUrl) return imageUrl;
+    return imageUrl.replace(
+        'http://localhost:5000',
+        process.env.API_URL || 'https://p6-openclassrooms-backend.onrender.com'
+    );
+};
+
 // LOGIQUE DE NOTRE ROUTE POST
 exports.createBook = (req, res, next) => {
     const bookObject = JSON.parse(req.body.book); // TRANSFORME UNE STRING EN OBJECT JS EXPLOITABLE
@@ -63,21 +72,42 @@ exports.deleteBook = ((req, res, next) => {
 // LOGIQUE DE NOTRE ROUTE GET:ID
 exports.getOneBook = ((req, res, next) => {
     Book.findOne({ _id: req.params.id })
-        .then(book => res.status(200).json(book))
+        .then(book => {
+            if (!book) {
+                return res.status(404).json({ error: 'Livre non trouvé' });
+            }
+            const bookObj = book.toObject();
+            bookObj.imageUrl = fixImageUrl(bookObj.imageUrl);
+            res.status(200).json(bookObj);
+        })
         .catch(error => res.status(404).json({ error }));
 });
 
 // LOGIQUE DE NOTRE ROUTE GET
 exports.getAllBooks = ((req, res, next) => {
     Book.find()
-        .then(books => res.status(200).json(books))
+        .then(books => {
+            const booksWithCorrectUrl = books.map(book => {
+                const bookObj = book.toObject();
+                bookObj.imageUrl = fixImageUrl(bookObj.imageUrl);
+                return bookObj;
+            });
+            res.status(200).json(booksWithCorrectUrl);
+        })
         .catch(error => res.status(400).json({ error }));
 });
 
 // LOGIQUE DE NOTRE ROUTE GET BESTRATING
 exports.getBestRating = ((req, res, next) => {
     Book.find().sort({ ratings: -1 }).limit(3)
-        .then(books => res.status(200).json(books))
+        .then(books => {
+            const booksWithCorrectUrl = books.map(book => {
+                const bookObj = book.toObject();
+                bookObj.imageUrl = fixImageUrl(bookObj.imageUrl);
+                return bookObj;
+            });
+            res.status(200).json(booksWithCorrectUrl);
+        })
         .catch(error => res.status(400).json({ error }));
 });
 
@@ -105,8 +135,12 @@ exports.rateBook = async (req, res, next) => {
         const newRating = { userId, grade: rating };
         ratingInDb.push(newRating); // ON AJOUTE LA NOUVELLE NOTE
         book.averageRating = calculateAverageRating(ratingInDb);
-        await book.save(); 
-        res.status(200).json(book);
+        await book.save();
+        
+        // Corrige l'URL de l'image avant de retourner
+        const bookObj = book.toObject();
+        bookObj.imageUrl = fixImageUrl(bookObj.imageUrl);
+        res.status(200).json(bookObj);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
